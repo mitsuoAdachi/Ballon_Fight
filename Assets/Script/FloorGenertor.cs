@@ -15,15 +15,16 @@ public class FloorGenertor : MonoBehaviour
 
     private float _timer;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    private GameDirector _gameDirector;
 
-    // Update is called once per frame
+    private bool isActivate;
+
     void Update()
     {
+        if(isActivate == false)
+        {
+            return;
+        }
         _timer += Time.deltaTime;
 
         if (_timer >= _waitTime) {
@@ -32,11 +33,28 @@ public class FloorGenertor : MonoBehaviour
             GeneratorFloor();
         }
     }
+
     private void GeneratorFloor() {
         GameObject obj = Instantiate(_floorPrefab, _generateTrans);
 
         float _randomPosY = Random.Range(-4f, 4);
         obj.transform.position = new Vector2(obj.transform.position.x, obj.transform.position.y + _randomPosY);
+
+        _gameDirector.GenerateCount++;
     }
+
+    public void SetUpGenerator(GameDirector gameDirector)
+    {
+        this._gameDirector = gameDirector;
+    }
+
+    /// <summary>
+    /// 生成状態のオン/オフを切り替え
+    /// </summary>
+    /// <param name="isSwitch"></param>
+    public void SwitchActivation(bool isSwitch)
+    {
+        isActivate = isSwitch;
+   }
 }
 
