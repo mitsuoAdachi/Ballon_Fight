@@ -23,18 +23,18 @@ public class AudioManager : MonoBehaviour
         if (index != 0)
         {
             //Debug.Log("前の曲のボリューム下げる");
-            audioSources[index - 1].DOFade(0, 0.75f);
+            audioSources[index - 1].DOFade(0, 1f);
         }
 
         if (index == 3)
         {
-            audioSources[index - 2].DOFade(0, 0.75f);
+            audioSources[index - 2].DOFade(0, 1f);
         }
-        yield return new WaitForSeconds(0.45f);
+        yield return new WaitForSeconds(1f);
 
         audioSources[index].Play();
 
-        audioSources[index].DOFade(0.1f, 0.75f);
+        audioSources[index].DOFade(1f, 2f);
 
         if (index != 0) {
             // 前に流れていた曲のボリュームが0になったら

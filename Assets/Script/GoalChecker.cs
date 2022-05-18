@@ -7,8 +7,11 @@ public class GoalChecker : MonoBehaviour
 {
     public float _moveSpeed = 0.01f;
     private float _stopPos = 6.5f;
-    private bool isGoal;
+    private bool isGoal=false;
     private GameDirector gameDirector;
+
+    [SerializeField]
+    private GameObject secretfloorobj;
 
     // Start is called before the first frame update
     void Start()
@@ -38,12 +41,20 @@ public class GoalChecker : MonoBehaviour
             // PlayerControllerの持つ、UIManagerの変数を利用して、GenerateResultPopUpメソッドを呼び出す。引数にはPlayerControllerのcoinCountを渡す
             playerController._uiManager.GenerateResultPopUp(playerController._coinPoint);
 
+            secretfloorobj.SetActive(true);
+
+            secretfloorobj.transform.DOLocalMoveY(0.45f, 2.5f).SetEase(Ease.Linear).SetRelative();
+
             gameDirector.GoalClear();
+
         }
     }
 
     public void SetUpGoalHouse(GameDirector gameDirector)
     {
         this.gameDirector = gameDirector;
+
+        secretfloorobj.SetActive(false);
     }
+
 }

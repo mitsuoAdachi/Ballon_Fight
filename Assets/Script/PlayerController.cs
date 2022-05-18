@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
@@ -19,6 +20,8 @@ public class PlayerController : MonoBehaviour
     private float limitPosX = 9.5f, limitPosY = 4.45f;
 
     private bool isGameover = false;
+
+    private int ballonCount;
 
     // ジャンプ・浮遊力
     public float jumpPower;
@@ -45,6 +48,26 @@ public class PlayerController : MonoBehaviour
 
     public UIManager _uiManager;
 
+    [SerializeField]
+    private AudioClip knockbackSE;
+    [SerializeField]
+    private AudioClip coinGetSE;
+
+
+    [SerializeField]
+    private GameObject knockbackEffectPrefab;
+
+    [SerializeField]
+    private Joystick joystick;
+
+    [SerializeField]
+    private Button btnJump;
+
+    [SerializeField]
+    private Button btnDetach;
+
+    [SerializeField]
+    private ParticleSystem _beam;
 
 
     // Start is called before the first frame update
@@ -59,6 +82,11 @@ public class PlayerController : MonoBehaviour
 
         // 配列の初期化(バルーンの最大生成数だけ配列の要素数を用意する
         ballons = new GameObject[maxBalllonCount];
+
+        //jumpボタンが押されたらOnClickJump関数が呼び出される
+        btnJump.onClick.AddListener(OnClickJump);
+        //DetachOrGenerateボタンが押されたらOnClickDetachOrGenerate関数が呼び出される
+        btnDetach.onClick.AddListener(OnClickDetachOrGenerate);
 
     }
 
@@ -110,6 +138,11 @@ public class PlayerController : MonoBehaviour
                 StartCoroutine(GenerateBallon());
             }
         }
+
+        if (Input.GetKey(KeyCode.B))
+        {
+            OnBeam();
+        }
     }
     /// <summary>
     /// ジャンプと空中
@@ -133,9 +166,14 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void Move()
     {
+#if UNITY_EDITOR
+        float x = Input.GetAxis(horizontal);
+        //x = joystick.Horizontal;
+#else
+        float x = joystick.Horizontal;
+#endif
         // 水平(横)方向への入力受付
         // InputManager の Horizontal に登録されているキーの入力があるかどうか確認を行う
-        float x = Input.GetAxis(horizontal);
 
         // x の値が 0 ではない場合 = キー入力がある場合
         if (x!=0)
@@ -216,6 +254,9 @@ public class PlayerController : MonoBehaviour
             ballons[1].GetComponent<Ballon>().SetUpBallon(this);
 
         }
+        //バルーンの数を増やす
+        ballonCount++;
+
         // 生成時間分待機
         yield return new WaitForSeconds(generateTime);
 
@@ -229,6 +270,12 @@ public class PlayerController : MonoBehaviour
         {
             Vector3 direction = (transform.position - collision.transform.position).normalized;
             transform.position += direction * knockbackPower;
+
+            AudioSource.PlayClipAtPoint(knockbackSE, transform.position);
+            GameObject knockbackEffect = Instantiate(knockbackEffectPrefab, collision.transform.position,Quaternion.identity);
+
+            // エフェクトを 0.5 秒後に破棄。生成したタイミングで変数に代入しているので、削除の命令が出せる
+            Destroy(knockbackEffect, 0.5f);
         }
     }
     public void DestroyBallon()
@@ -241,6 +288,9 @@ public class PlayerController : MonoBehaviour
         {
             Destroy(ballons[0]);
         }
+
+        //バルーンの数を減らす
+        ballonCount--;
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -249,7 +299,9 @@ public class PlayerController : MonoBehaviour
             _coinPoint += collision.gameObject.GetComponent<Coin>().point;
             _uiManager.UpdateDisplayScore(_coinPoint);
 
-            Destroy(collision.gameObject);
+            AudioSource.PlayClipAtPoint(coinGetSE, transform.position);
+
+            Destroy(collision.gameObject,0.5f);
         }
 
     }
@@ -261,6 +313,27 @@ public class PlayerController : MonoBehaviour
         isGameover = true;
         Debug.Log(isGameover);
         _uiManager.DisplayGameOverInfo();
+    }
+
+    private void OnClickJump()
+    {
+        if(ballonCount > 0)
+        {
+            Jump();
+        }
+    }
+
+    private void OnClickDetachOrGenerate()
+    {
+        if(isGrounded == true && ballonCount < maxBalllonCount && isGenerating == false)
+        {
+            StartCoroutine(GenerateBallon());
+        }
+    }
+
+    public void OnBeam()
+    {
+        _beam.Play();
     }
 
 }
