@@ -50,7 +50,7 @@ public class RandomObjectGenerator : MonoBehaviour
         int randomIndex = Random.Range(0, objPrefab.Length);
         GameObject obj = Instantiate(objPrefab[randomIndex], generateTran);
 
-        float randomPosY = Random.Range(-4.0f, 4.0f);
+        float randomPosY = Random.Range(-10.0f, 10.0f);
 
         obj.transform.position = new Vector2(obj.transform.position.x, obj.transform.position.y + randomPosY);
 

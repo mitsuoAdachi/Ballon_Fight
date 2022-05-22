@@ -17,7 +17,8 @@ public class PlayerController : MonoBehaviour
 
     private Animator anime;
 
-    private float limitPosX = 9.5f, limitPosY = 4.45f;
+    private float limitPosX = 9.5f;
+        //limitPosY = 4.45f;
 
     private bool isGameover = false;
 
@@ -216,10 +217,10 @@ public class PlayerController : MonoBehaviour
         }
 
         //移動範囲の制限
-        float posX = Mathf.Clamp(transform.position.x, -limitPosX, limitPosX);
-        float posY = Mathf.Clamp(transform.position.y, -limitPosY, limitPosY);
+        float posX = Mathf.Clamp(transform.position.x, -8.5f, 5);
+        //float posY = Mathf.Clamp(transform.position.y, -limitPosY, limitPosY);
 
-        transform.position = new Vector2(posX, posY);
+        transform.position = new Vector2(posX, transform.position.y);
     }
 
     private IEnumerator GenerateBallon()
@@ -301,7 +302,7 @@ public class PlayerController : MonoBehaviour
 
             AudioSource.PlayClipAtPoint(coinGetSE, transform.position);
 
-            Destroy(collision.gameObject,0.5f);
+            Destroy(collision.gameObject,0.2f);
         }
 
     }

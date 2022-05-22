@@ -7,6 +7,10 @@ TagManager:
   - DamageObject
   - Enemy
   - Coin
+  - FxTemporaire
+  - BackUnder
+  - BackCenter
+  - BackUpper
   layers:
   - Default
   - TransparentFX

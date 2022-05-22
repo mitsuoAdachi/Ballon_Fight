@@ -37,7 +37,7 @@ public class FloorGenertor : MonoBehaviour
     private void GeneratorFloor() {
         GameObject obj = Instantiate(_floorPrefab, _generateTrans);
 
-        float _randomPosY = Random.Range(-4f, 4);
+        float _randomPosY = Random.Range(-10f, 10);
         obj.transform.position = new Vector2(obj.transform.position.x, obj.transform.position.y + _randomPosY);
 
         _gameDirector.GenerateCount++;

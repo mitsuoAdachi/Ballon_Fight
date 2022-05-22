@@ -4,6 +4,17 @@ using UnityEngine;
 
 public class BackGroundScroll : MonoBehaviour
 {
+    public enum BackType
+    {
+        upper,
+        center,
+        under
+    }
+
+    public BackType _backType;
+
+    public bool[] _underCollision;
+
     [Header("背景画像のスクロール速度＝強制スクロールの速度")]
     public float scrollSpeed = 0.01f;
 
@@ -24,5 +35,42 @@ public class BackGroundScroll : MonoBehaviour
             //ゲームオブジェクトの位置を再スタート地点へ移動する
             transform.position = new Vector2(restartPosition, 0);
         }
+
     }
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag == "BackUnder")
+        {
+            _underCollision[2] = true;
+        }
+
+        if (collision.gameObject.tag == "BackCenter")
+        {
+            _underCollision[1] = true;
+        }
+
+        if (collision.gameObject.tag == "BackUpper")
+        {
+            _underCollision[0] = true;
+        }
+    }
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag == "BackUnder")
+        {
+            _underCollision[2] = false;
+        }
+
+        if (collision.gameObject.tag == "BackCenter")
+        {
+            _underCollision[1] = false;
+        }
+
+        if (collision.gameObject.tag == "BackUpper")
+        {
+            _underCollision[0] = false;
+        }
+
+    }
+
 }
